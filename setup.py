@@ -3,6 +3,6 @@ import py2exe
 from PyPDF2 import PdfFileReader, PdfFileWriter
 import csv
 import os
+import main
 
-
-setup(console=['main.py'])
+setup(console=['gui.py'])
