@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hello, World!</title>
+    <!-- Include eel.js - note this file doesn't exist in the 'web' directory -->
+    <script type="text/javascript" src="/eel.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+    />
+  </head>
+
+  <body>
+    <section class="section">
+      <div class="container">
+        <div class="columns is-centered">
+          <div class="column">
+            <button
+              class="button is-primary is-fullwidth is-large"
+              onclick="window.location = 'SBS.html'"
+            >
+              Separate By Students
+            </button>
+          </div>
+          <div class="column">
+            <button
+              class="button is-primary is-fullwidth is-large"
+              onclick="window.location = 'SBP.html'"
+            >
+              Separate By Pages
+            </button>
+          </div>
+          <div class="column">
+            <button
+              class="button is-primary is-fullwidth is-large"
+              onclick="window.location = 'CBS.html'"
+            >
+              Combine By Students
+            </button>
+          </div>
+        </div>
+        <div
+          class="notification is-info"
+          style="display: none"
+          id="succes_noti"
+        >
+          Separated successfully
+        </div>
+        <script>
+          eel.expose(succes_message);
+          function succes_message(info, save_path) {
+            document.querySelector(
+              "#succes_noti"
+            ).textContent = `${info} successfully Saved at: ${save_path}`;
+            document.querySelector("#succes_noti").style.display = "block";
+          }
+        </script>
+      </div>
+    </section>
+  </body>
+</html>

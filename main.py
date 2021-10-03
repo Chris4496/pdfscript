@@ -3,24 +3,6 @@ import csv
 import os
 import re
 
-print(os.getcwd())
-base = os.getcwd()
-out = 'out'
-combine = 'combine_out'
-
-outpath = os.path.join(base, out)
-combinepath = os.path.join(base, combine)
-
-try:
-    os.mkdir(outpath)
-except FileExistsError:
-    pass
-
-try:
-    os.mkdir(combinepath)
-except FileExistsError:
-    pass
-
 
 def get_students_name_by_csv(csv_path):
     l = list()
@@ -32,8 +14,13 @@ def get_students_name_by_csv(csv_path):
     return flat_list
 
 
+def get_pdf_pages(path):
+    pdf = PdfFileReader(open(path, 'rb'))
+    return pdf.getNumPages()
+
+
 # This is unreadable
-def sperate_by_pages(pdf_path, number_of_students):
+def sperate_by_pages(pdf_path, number_of_students, save_path):
     with open(pdf_path, 'rb') as f:
         pdf = PdfFileReader(f)
 
@@ -46,13 +33,13 @@ def sperate_by_pages(pdf_path, number_of_students):
                 p = page + stu*pages_per_students
                 pdf_writer.addPage(pdf.getPage(p))
 
-            filePath = os.path.join(".\out", f'all_page_{page+1}.pdf')
-            completeName = os.path.join(os.getcwd(), filePath)
+            filePath = os.path.join(save_path, f'all_page_{page+1}.pdf')
+            completeName = filePath
             with open(completeName, 'wb') as output_pdf:
                 pdf_writer.write(output_pdf)
 
 
-def sperate_by_students(pdf_path, number_of_students, student_list):
+def separate_by_students(pdf_path, number_of_students, student_list, save_path):
     with open(pdf_path, 'rb') as f:
         pdf = PdfFileReader(f)
         all_pages = pdf.getNumPages()
@@ -62,13 +49,17 @@ def sperate_by_students(pdf_path, number_of_students, student_list):
             for page in range(pages_per_students):
                 p = page + stu*pages_per_students
                 pdf_writer.addPage(pdf.getPage(p))
-            filePath = os.path.join(".\out", f'{student_list[stu]}.pdf')
-            completeName = os.path.join(os.getcwd(), filePath)
+            if len(student_list) == number_of_students:
+                filePath = os.path.join(save_path, f'{student_list[stu]}.pdf')
+            else:
+                filePath = os.path.join(save_path, f'{stu+1}.pdf')
+
+            completeName = filePath
             with open(completeName, 'wb') as output_pdf:
                 pdf_writer.write(output_pdf)
 
 
-def combine_by_students(folder_path, student_list):
+def combine_by_students(folder_path, student_list, save_path):
     def key_for_sorting(name):
         mo = re.findall(r"\d+", name)
         return int(mo[-1])
@@ -100,14 +91,14 @@ def combine_by_students(folder_path, student_list):
                 pdf = PdfFileReader(f)
                 pdf_writer.addPage(pdf.getPage(stu))
                 filePath = os.path.join(
-                    ".\combine_out", f'{student_list[stu]}.pdf')
-                completeName = os.path.join(os.getcwd(), filePath)
+                    save_path, f'{student_list[stu]}.pdf')
+                completeName = filePath
                 with open(completeName, 'wb') as output_pdf:
                     pdf_writer.write(output_pdf)
     return "Combine successfully"
 
 
 if __name__ == '__main__':
-    flat_list = get_students_name_by_csv('names.csv')
-    print(combine_by_students(
-        'E:\\Local repository\\pdfscript\\test_combine_folder', flat_list))
+    # flat_list = get_students_name_by_csv('names.csv')
+    print(separate_by_students(
+        'E:\Local repository\pdfscript\_demo_\original.pdf', 5, ['Kris', 'Hi', 'fjds', 'fdsfh', 'dsfdsf'], 'E:\\'))

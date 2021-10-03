@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hello, World!</title>
+    <!-- Include eel.js - note this file doesn't exist in the 'web' directory -->
+    <script type="text/javascript" src="/eel.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+    />
+  </head>
+  <body>
+    <!-- Header start -->
+    <div class="level">
+      <div class="level-left">
+        <div class="level-item m-3">
+          <button class="button is-link is-small is-light" onclick="goback()">
+            Go Back
+          </button>
+        </div>
+      </div>
+      <div class="level-right">
+        <div class="level-item">
+          <h1 class="title m-3">Separate By Pages</h1>
+        </div>
+      </div>
+    </div>
+    <script>
+      eel.expose(goback);
+      function goback() {
+        window.location = "index.html";
+      }
+    </script>
+    <!-- Header end -->
+
+    <!-- Notification -->
+    <div
+      class="notification is-danger mx-6"
+      style="display: none"
+      id="pdf_noti"
+    >
+      <button
+        class="delete"
+        onclick="document.querySelector('#pdf_noti').style.display='none'"
+      ></button>
+      Pick a PDF file!
+    </div>
+    <div
+      class="notification is-danger mx-6"
+      style="display: none"
+      id="number_noti"
+    >
+      <button
+        class="delete"
+        onclick="document.querySelector('#number_noti').style.display='none'"
+      ></button>
+      Pick a number!
+    </div>
+    <script>
+      eel.expose(show_noti);
+      function show_noti(noti) {
+        if (noti == "pdf") {
+          document.querySelector("#pdf_noti").style.display = "block";
+        }
+        if (noti == "number") {
+          document.querySelector("#number_noti").style.display = "block";
+        }
+      }
+    </script>
+    <!-- Notification end -->
+
+    <div class="columns is-multiline is-centered">
+      <!-- PDF file upload -->
+      <div class="column is-full">
+        <div class="file has-name is-centered" id="pdf_select">
+          <label class="file-label">
+            <input
+              class="file-input"
+              name="resume"
+              type="button"
+              onclick="pdfoc()"
+            />
+            <span class="file-cta">
+              <span class="file-label"> Pick a PDF file… </span>
+            </span>
+            <span class="file-name"> No file picked </span>
+          </label>
+        </div>
+      </div>
+      <script>
+        async function pdfoc() {
+          filename = await eel.get_pdf()();
+          if (filename.length > 0) {
+            console.log(filename);
+            const fileName = document.querySelector("#pdf_select .file-name");
+            fileName.textContent = filename;
+          }
+        }
+      </script>
+      <!-- PDF file upload end -->
+      <!-- PDF pages -->
+      <div class="column is-full" id="page_display">
+        <h4 class="subtitle is-5 has-text-centered"></h4>
+      </div>
+      <script>
+        eel.expose(show_page_display);
+        function show_page_display(pages) {
+          document.querySelector(
+            "#page_display h4"
+          ).textContent = `This file have ${pages} pages`;
+        }
+      </script>
+      <!-- PDF pages end -->
+      <!-- Student number input -->
+      <div class="column is-full" id="student_input">
+        <div class="container px-6">
+          <input
+            id="student_number"
+            class="input is-primary"
+            type="text"
+            placeholder="Number of students"
+          />
+        </div>
+      </div>
+      <script>
+        eel.expose(get_student_number);
+        function get_student_number() {
+          return document.querySelector("#student_number").value;
+        }
+      </script>
+      <!-- Student number input end -->
+      <!-- Select save path -->
+      <div class="column is-full">
+        <div class="file has-name is-centered" id="save_path_select">
+          <label class="file-label">
+            <input
+              class="file-input"
+              name="resume"
+              type="button"
+              onclick="pathoc()"
+            />
+            <span class="file-cta">
+              <span class="file-label"> File save at: </span>
+            </span>
+            <span class="file-name"> No location picked </span>
+          </label>
+        </div>
+      </div>
+      <script>
+        eel.expose(pathchange);
+        function pathchange(dir) {
+          document.querySelector("#save_path_select .file-name").textContent =
+            dir;
+        }
+
+        async function pathoc() {
+          filename = await eel.get_save_path()();
+          if (filename.length > 0) {
+            console.log(filename);
+            const fileName = document.querySelector(
+              "#save_path_select .file-name"
+            );
+            fileName.textContent = filename;
+          }
+        }
+      </script>
+      <!-- Select save path end -->
+      <!-- student submit button -->
+      <div class="column is-full" id="number_submit">
+        <div class="has-text-centered">
+          <button
+            class="button is-success"
+            onclick="eel.submit_SBP(get_student_number())"
+          >
+            Submit
+          </button>
+        </div>
+      </div>
+      <!-- student sumit button end -->
+    </div>
+  </body>
+</html>
